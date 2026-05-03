@@ -64,7 +64,7 @@ document.getElementById("app").innerHTML = `
           </div>
           <div id="fb-cash" class="payment-feedback cash-fb">
             <span class="fb-icon">✅</span>
-            <div class="fb-text"><b>Pay with Cash</b>Bills only, no coins. Payment is due at time of service.</div>
+            <div class="fb-text"><b>Pay with Cash</b>Payment is due at time of service.</div>
           </div>
           <div id="fb-etransfer" class="payment-feedback etransfer-fb" style="display:none;">
             <div class="fb-inner-row">
