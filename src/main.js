@@ -13,7 +13,6 @@ const state = {
   defaultStartTime: '16:00',
   selectedDate:     new Date(),
   selectedSlot:     null,
-  paymentMethod:    'cash',
   activeTab:        'today',
   isAdmin:          false,
 };
@@ -54,16 +53,6 @@ document.getElementById('app').innerHTML = `
         </div>
         <div class="form-row single">
           <div class="form-group"><label>Comments (optional)</label><textarea id="c-comments" placeholder="Any special requests..."></textarea></div>
-        </div>
-        <div class="payment-section">
-          <span class="payment-label">Payment Method</span>
-          <div class="payment-toggle">
-            <button class="pay-opt active" id="pay-cash" onclick="selectPayment('cash')">💵 Cash</button>
-          </div>
-          <div id="fb-cash" class="payment-feedback cash-fb">
-            <span class="fb-icon">✅</span>
-            <div class="fb-text"><b>Pay with Cash</b>Payment is due at time of service.</div>
-          </div>
         </div>
         <button class="submit-btn" id="submitBtn" onclick="submitCustomerBooking()">Request Appointment</button>
       </div>
@@ -308,26 +297,6 @@ window.selectSlot = function(slot) {
 };
 
 // ─── PAYMENT ──────────────────────────────────────────────────────────────────
-window.selectPayment = function(method) {
-  state.paymentMethod = method;
-  document.getElementById('pay-cash').classList.toggle('active', method === 'cash');
-  document.getElementById('pay-etransfer').classList.toggle('active', method === 'etransfer');
-  document.getElementById('fb-cash').style.display      = method === 'cash'      ? 'flex'  : 'none';
-  document.getElementById('fb-etransfer').style.display = method === 'etransfer' ? 'flex'  : 'none';
-};
-
-window.copyEmail = function() {
-  navigator.clipboard.writeText(ETRANSFER_EMAIL).then(() => {
-    const btn = document.getElementById('copyBtn');
-    btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M2.5 8.5L6 12L13.5 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> Copied!`;
-    btn.classList.add('copied');
-    setTimeout(() => {
-      btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 16 16" fill="none"><rect x="5" y="5" width="9" height="9" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M11 5V3.5A1.5 1.5 0 0 0 9.5 2h-6A1.5 1.5 0 0 0 2 3.5v6A1.5 1.5 0 0 0 3.5 11H5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg> Copy`;
-      btn.classList.remove('copied');
-    }, 2500);
-  }).catch(() => toast('Select the email manually to copy.'));
-};
-
 // ─── CUSTOMER: SUBMIT ─────────────────────────────────────────────────────────
 window.submitCustomerBooking = async function() {
   const fn = document.getElementById('c-fname').value.trim();
@@ -340,18 +309,18 @@ window.submitCustomerBooking = async function() {
   try {
     const inserted = await sbInsert('appointments', {
       first_name: fn, last_name: ln,
-      date:    dateKey(state.selectedDate),
-      time:    state.selectedSlot,
-      service: 'Haircut',
-      payment: state.paymentMethod,
-      comments: document.getElementById('c-comments').value.trim(),
-      status:   'pending',
+      date:       dateKey(state.selectedDate),
+      time:       state.selectedSlot,
+      service:    'Haircut',
+      payment:    'cash',
+      comments:   document.getElementById('c-comments').value.trim(),
+      status:     'pending',
       created_by: 'customer',
     });
     state.appointments.push({
       id: inserted[0].id, firstName: fn, lastName: ln,
       date: dateKey(state.selectedDate), time: state.selectedSlot,
-      service: 'Haircut', payment: state.paymentMethod,
+      service: 'Haircut', payment: 'cash',
       comments: document.getElementById('c-comments').value.trim(),
       status: 'pending', createdBy: 'customer',
     });
@@ -359,7 +328,6 @@ window.submitCustomerBooking = async function() {
     document.getElementById('c-lname').value    = '';
     document.getElementById('c-comments').value = '';
     state.selectedSlot = null;
-    selectPayment('cash');
     document.getElementById('bookingFormWrap').style.display = 'none';
     renderSlots();
     toast('Appointment requested! The barber will confirm shortly.');
@@ -514,7 +482,6 @@ function renderApptList() {
       </div>`;
 
     const dateStr = new Date(a.date + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-    const payPill = `<span class="pay-pill ${a.payment==='cash' ? 'cash' : ''}">${a.payment==='cash' ? 'Cash' : 'e-Transfer'}</span>`;
 
     return `
       <div class="appt-item ${iCls}">
@@ -523,7 +490,7 @@ function renderApptList() {
           <span class="badge ${bCls}">${a.status}</span>
         </div>
         <div class="appt-detail">
-          ${dateStr} · ${a.time} · Haircut ${payPill}
+          ${dateStr} · ${a.time} · Haircut
           ${a.comments ? `<br><em>${a.comments}</em>` : ''}
         </div>
         ${actions}
@@ -553,7 +520,6 @@ window.updateAppt = async function(id, status) {
               date:      a.date,
               time:      a.time,
               comments:  a.comments,
-              payment:   a.payment,
             }),
           });
           toast('Appointment approved and added to calendar. 📅');

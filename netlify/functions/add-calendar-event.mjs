@@ -10,7 +10,7 @@ export default async function handler(req, context) {
   }
 
   try {
-    const { firstName, lastName, date, time, comments, payment } = await req.json();
+    const { firstName, lastName, date, time, comments } = await req.json();
 
     // Validate required fields
     if (!firstName || !lastName || !date || !time) {
@@ -40,10 +40,7 @@ export default async function handler(req, context) {
     const endDateTime   = new Date(startDateTime.getTime() + 45 * 60 * 1000); // 45 min later
 
     // ── Build event description ────────────────────────────────────────────
-    const descriptionLines = [
-      `Service: Haircut`,
-      `Payment: ${payment === 'cash' ? 'Cash' : 'e-Transfer'}`,
-    ];
+    const descriptionLines = [`Service: Haircut`];
     if (comments) descriptionLines.push(`Notes: ${comments}`);
 
     // ── Create the calendar event ──────────────────────────────────────────
