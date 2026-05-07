@@ -54,6 +54,13 @@ document.getElementById('app').innerHTML = `
         <div class="form-row single">
           <div class="form-group"><label>Comments (optional)</label><textarea id="c-comments" placeholder="Any special requests..."></textarea></div>
         </div>
+        <div class="payment-section">
+          <span class="payment-label">Payment Method</span>
+          <div class="payment-feedback cash-fb" style="display:flex;">
+            <span class="fb-icon">💵</span>
+            <div class="fb-text"><b>Cash Only</b>Payment is due at time of service.</div>
+          </div>
+        </div>
         <button class="submit-btn" id="submitBtn" onclick="submitCustomerBooking()">Request Appointment</button>
       </div>
     </div>
