@@ -48,8 +48,8 @@ document.getElementById('app').innerHTML = `
       <div class="booking-panel">
         <h3>Your Details</h3>
         <div class="form-row">
-          <div class="form-group"><label>First Name</label><input type="text" id="c-fname" placeholder="John"></div>
-          <div class="form-group"><label>Last Name</label><input type="text" id="c-lname" placeholder="Doe"></div>
+          <div class="form-group"><label>First Name</label><input type="text" id="c-fname" placeholder="Gerard"></div>
+          <div class="form-group"><label>Last Name</label><input type="text" id="c-lname" placeholder="Mak"></div>
         </div>
         <div class="form-row single">
           <div class="form-group"><label>Comments (optional)</label><textarea id="c-comments" placeholder="Any special requests..."></textarea></div>
